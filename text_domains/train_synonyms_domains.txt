@@ -1,0 +1,129 @@
+Portrait - Photo
+Image - Photo
+Photo - Photo
+Painting - Photo
+Graffiti - Photo
+Pencil Painting - Photo
+Photograph - Photo
+Cartoon - Photo
+Stereo View - Photo
+Animation - Photo
+Drawing - Photo
+Dancers at the bar - Photo
+Una Familia - Photo
+Graphics - Photo
+Mosaic - Photo
+Caricature - Photo
+Raphael - Photo
+Salvaror Dali - Photo
+Edvard Munch - Photo
+Modigliani - Photo
+Van Gogh - Photo
+Claude Monet - Photo
+Leonardo Da Vinci - Photo
+Pop Art - Photo
+Impressionism - Photo
+Renaissance - Photo
+Abstract - Photo
+Vintage - Photo
+Antiquity - Photo
+Cubism - Photo
+Disney - Photo
+Russian - Photo
+Chineese - Photo
+Japanese - Photo
+Spanish - Photo
+Italian - Photo
+Dutch - Photo
+German - Photo
+Surreal - Photo
+WaltDisney - Photo
+DreamWorks - Photo
+Manga - Photo
+Komodo - Photo
+Modern - Photo
+Realism - Photo
+Starry Night - Photo
+Old-timey - Photo
+Pencil - Photo
+Gouache - Photo
+Acrylic - Photo
+Watercolor - Photo
+Oil - Photo
+Black - Photo
+White - Photo
+Blue - Photo
+Charcoal - Photo
+Tolkien Elf - Human
+White Walker - Human
+Gnom - Human
+Goblin - Human
+Banshee - Human
+Demon - Human
+The Shrek - Human
+The Hulk - Human
+The Thanos - Human
+The Batman - Human
+Witcher - Human
+Vampire - Human
+Homer Simpson - Human
+Homo Sapiens - Human
+Emma Stone - Human
+Hilary Clinton - Human
+Rihanna - Human
+Taylor Swift - Human
+Beyonce - Human
+Emma Watson - Human
+Kim Kardashian - Human
+Lady Gaga - Human
+Chris Pratt - Human
+Tom Hanks - Human
+Tom Cruise - Human
+Jack Nicholson - Human
+Leonardo DiCaprio - Human
+Johnny Depp - Human
+Matt Daemon - Human
+Robert Downey Jr. - Human
+Will Smith - Human
+Robet De Niro - Human
+Morgan Freeman - Human
+Keanu Reeves - Human
+Brad Pitt - Human
+Ryan Reynolds - Human
+George Clooney - Human
+Scarlett Johansson - Human
+Nicole Kidman - Human
+Bradley Cooper - Human
+Matthew McConaughey - Human
+Hugh Jackman - Human
+Chris Evans - Human
+Chris Hemsworth - Human
+Daniel Radcliffe - Human
+Orlando Bloom - Human
+Freddie Mercury - Human
+Eminem - Human
+Elvis Presley - Human
+Adele - Human
+Ed Sheeran - Human
+Katy Perry - Human
+Donald Trump - Human
+Nicolas Cage - Human
+Mark Zuckerberg - Human
+Elon Musk - Human
+Statue - Human
+Metal Statue - Human
+Glass Statue - Human
+Plastic Puppet - Human
+Puppet - Human
+Bust - Human
+Woman - Human
+Man - Human
+Undead - Human
+Monster - Human
+Clown - Human
+Devil - Human
+Succubus - Human
+Ghost - Human
+Lycanthrope - Human
+Caveman - Human
+Primitive Man - Human

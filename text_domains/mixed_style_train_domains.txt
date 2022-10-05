@@ -1,0 +1,50 @@
+Portrait - Photo
+Image - Photo
+Photo - Photo
+Painting - Photo
+Graffiti - Photo
+Photograph - Photo
+Cartoon - Photo
+3D render - Photo
+Drawing - Photo
+Graphics - Photo
+Mosaic - Photo
+Caricature - Photo
+Raphael - Photo
+Salvaror Dali - Photo
+Edvard Munch - Photo
+Modigliani - Photo
+Van Gogh - Photo
+Claude Monet - Photo
+Leonardo Da Vinci - Photo
+Pop Art - Photo
+Impressionism - Photo
+Renaissance - Photo
+Abstract - Photo
+Vintage - Photo
+Antiquity - Photo
+Cubism - Photo
+Disney - Photo
+Russian - Photo
+Japanese - Photo
+Spanish - Photo
+Italian - Photo
+Dutch - Photo
+German - Photo
+Surreal - Photo
+WaltDisney - Photo
+DreamWorks - Photo
+Manga - Photo
+Modern - Photo
+Realism - Photo
+Starry Night - Photo
+Old-timey - Photo
+Pencil - Photo
+Gouache - Photo
+Acrylic - Photo
+Watercolor - Photo
+Oil - Photo
+Black - Photo
+White - Photo
+Blue - Photo
+Charcoal - Photo

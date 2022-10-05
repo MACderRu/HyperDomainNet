@@ -1,0 +1,70 @@
+exp:
+  config_dir: configs
+  config: im2im_single.yaml
+  project: Rebuttle_same_mtg
+  name: ElsaStylized
+  seed: 0
+  root: .
+  notes: empty notes
+  step_save: 10
+  trainer: im2im_single
+  tags:
+    - test
+training:
+  iter_num: 100
+  batch_size: 4
+  device: cuda:0
+  generator: stylegan2
+  phase: mapping
+  patch_key: s_mod
+  source_class: Real Person
+  target_class: ./Sber_colab/StylisedImages/disney_princess.jpg
+  auto_layer_k: 16
+  auto_layer_iters: 0
+  auto_layer_batch: 8
+  mixing_noise: 0.9
+optimization_setup:
+  visual_encoders:
+    - ViT-B/32
+    - ViT-B/16
+  loss_funcs:
+    - direction
+    - clip_within
+    - clip_ref
+    - l2_rec
+    - lpips_rec
+  loss_coefs:
+    - 1.0
+    - 0.5
+    - 30.0
+    - 10.0
+    - 10.0
+  g_reg_every: 4
+  optimizer:
+    weight_decay: 0.0
+    lr: 0.01
+    betas:
+    - 0.9
+    - 0.999
+generator_args:
+  checkpoint_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
+evaluation:
+  is_on: false
+  vision_models:
+    - ViT-B/32
+    - ViT-B/16
+  step: 200
+  data_size: 500
+  batch_size: 24
+  fid: true
+  fid_ref: ../few-shot-gan-adaptation/sketches_all_resized/
+logging:
+  log_every: 10
+  log_images: 20
+  latents_to_edit: []
+  truncation: 0.5
+  num_grid_outputs: 1
+checkpointing:
+  is_on: false
+  start_from: false
+  step_backup: 500

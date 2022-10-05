@@ -1,0 +1,79 @@
+exp:
+  config_dir: /Users/vadimtitov/CLIPResearch/configs/
+  config: multidomain.yaml
+  project: PaperMapperGeneralisation
+  name: MixedChannelIN_aug_resample_fixed
+  tags: 
+    - mapper
+  seed: 12
+  root: .
+  notes: empty notes
+  step_save: 250
+  trainer: random_resample_multiple_domain_adaptation
+  multi_gpu: true
+  device_ids:
+    - 0
+    - 1
+    - 2
+  dump_metrics: false
+generalisation:
+  mixing_noise: 0.9
+training:
+  iter_num: 10000
+  batch_size: 72
+  device: cuda:0
+  patch_key: channelin_mult
+  style_train_domain_list: text_domains/mixed_launch_style_domains.txt
+  content_train_domain_list: text_domains/mixed_launch_content_domains.txt
+  close_test_domain_list: text_domains/domain_list_20.txt
+  mixing_noise: 0.9
+  resampling_cos_threshold: 0.75
+  mapper_encoder_type: ViT-B/32
+  mapper_config:
+    backbone_type: shared
+    mapper_type: residual_channelin
+    activation: relu
+    input_dimension: 512
+    width: 512
+    head_depth: 5
+    backbone_depth: 10
+    no_coarse: false
+    no_fine: false
+    no_medium: false
+optimization_setup:
+  visual_encoders:
+    - ViT-B/32
+  loss_funcs:
+    - direction_original
+    - target_target_direction
+  loss_coefs:
+    - 1.0
+    - 0.4
+  optimizer:
+    weight_decay: 0.0
+    lr: 0.00005
+    betas:
+    - 0.9
+    - 0.999
+  weights_delta_l2_coef: 0.8
+  affine_l2_coef: 0.0
+generator_setup:
+  weights_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
+logging:
+  log_every: 10
+  log_images: 100
+  latents_to_edit: []
+  image_embedding_log: false
+  truncation: 0.7
+  num_grid_outputs: 1
+evaluation:
+  is_on: false
+  vision_models:
+    - ViT-L/14
+  step: 1000
+  data_size: 500
+  batch_size: 50
+checkpointing:
+  is_on: false
+  start_from: false
+  step_backup: 1000

@@ -1,0 +1,7 @@
+./image_domains/sketch.png
+./image_domains/anastasia.png
+./image_domains/digital_painting_jing.png
+./image_domains/mermaid.png
+./image_domains/speed_paint.png
+./image_domains/titan_armin.png
+./image_domains/titan_erwin.png

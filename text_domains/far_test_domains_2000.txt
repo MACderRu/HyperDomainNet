@@ -1,0 +1,12 @@
+Caricature - Photo
+Mosaic - Photo
+Oil painting - Photo
+Pixar caricature - Photo
+Pixar mosaic - Photo
+Pixar oil painting - Photo
+Manga caricature - Photo
+Manga mosaic - Photo
+Manga oil painting - Photo
+Pablo Picasso caricature - Photo
+Pablo Picasso mosaic - Photo
+Pablo Picasso oil painting - Photo

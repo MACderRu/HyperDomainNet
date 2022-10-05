@@ -1,0 +1,79 @@
+exp:
+  config_dir: /Users/vadimtitov/CLIPResearch/configs/
+  config: multidomain.yaml
+  project: RebuttleIm2Im_multiple
+  name: PaperDomains
+  tags: 
+    - mapper
+  seed: 12
+  root: .
+  notes: empty notes
+  step_save: 10000
+  trainer: im2im_multiple_base
+  dump_metrics: false
+generalisation:
+  mixing_noise: 0.9
+training:
+  iter_num: 800
+  batch_size: 12
+  device: cuda:0
+  generator: stylegan2
+  patch_key: cin_mult
+  train_styles: image_domains.txt
+  mixing_noise: 0.9
+  auto_layer_iters: 0
+  mapper_config:
+    backbone_type: shared
+    mapper_type: residual_channelin
+    activation: relu
+    input_dimension: 512
+    width: 512
+    head_depth: 2
+    backbone_depth: 6
+    no_coarse: true
+    no_fine: false
+    no_medium: false
+optimization_setup:
+  visual_encoders:
+    - ViT-B/32
+    - ViT-B/16
+  loss_funcs:
+    - direction
+    - clip_ref
+    - l2_rec
+    - lpips_rec
+    - tt_direction
+    - offsets_l2
+  loss_coefs:
+    - 1.0
+    - 2.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 2.0
+  optimizer:
+    weight_decay: 0.0
+    lr: 0.00005
+    betas:
+    - 0.9
+    - 0.999
+generator_args:
+  checkpoint_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
+logging:
+  log_every: 10
+  log_images: 20
+  latents_to_edit: []
+  image_embedding_log: false
+  truncation: 0.7
+  num_grid_outputs: 1
+evaluation:
+  is_on: false
+  vision_models:
+    - ViT-L/14
+  step: 1000
+  data_size: 500
+  batch_size: 50
+checkpointing:
+  is_on: false
+  start_from: false
+  step_backup: 10000000
