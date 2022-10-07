@@ -10,8 +10,8 @@ import torch.distributions as dis
 import typing as tp
 
 from pathlib import Path
-from core.utils.text_templates import imagenet_templates
 
+from core.utils.text_templates import imagenet_templates
 from core.utils.train_log import StreamingMeans, TimeLog, Timer
 from core.utils.loggers import LoggingManager
 from core.utils.class_registry import ClassRegistry
@@ -21,18 +21,16 @@ from core.utils.common import (
     get_stylegan_conv_dimensions, DataParallelPassthrough, get_trainable_model_state
 )
 
-
 from core.loss import DirectLoss
-
 from core.utils.math_utils import (
     resample_single_vector, resample_batch_vectors, convex_hull,
     resample_batch_templated_embeddings, convex_hull_small
 )
+
 from core.utils.image_utils import BicubicDownSample, t2im, construct_paper_image_grid, crop_augmentation
 from core.parametrizations import BaseParametrization
 from core.mappers import mapper_registry
 from core.evaluation import Evaluator, MTGEvaluator
-
 from core.utils.II2S import II2S
 from core.uda_models import uda_models
 from core.dataset import ImagesDataset

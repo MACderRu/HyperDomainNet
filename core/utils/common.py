@@ -341,17 +341,21 @@ def get_trainable_model_state(config, state_dict):
         ckpt = {
             "model_type": "mapper",
             "mapper_config": config.training.mapper_config,
+            "patch_key": config.training.patch_key
             "state_dict": state_dict,
         }
     else:
         # save offsets parametrization
         ckpt = {
-            "model_type": "parametrization",
-            "generator_patch_key": config.training.patch_key,
-            "base_head_key": config.training.patch_key,
+            "model_type": "parameterization",
+            "patch_key": config.training.patch_key,
             "state_dict": state_dict
         }
-
+    
+    sg2_params = 
+    ckpt['sg_2_params'] = {
+        
+    }
     return ckpt
 
 

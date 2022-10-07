@@ -55,7 +55,7 @@ class ClassRegistry:
                 for k, v in self.classes.items()
             ],
         )
-
+        
     def make_dataclass_from_args(self):
         return dataclasses.make_dataclass(
             'Name',
@@ -64,7 +64,7 @@ class ClassRegistry:
                 for k, v in self.args.items()
             ],
         )
-
+        
     def _add_single_obj(self, obj, name, arg_keys):
         self.classes[name] = obj
         if inspect.isfunction(obj):
@@ -75,7 +75,7 @@ class ClassRegistry:
             self.args[name] = self.make_dataclass_from_func(
                 obj.__init__, name, arg_keys
             )
-
+        
     def add_to_registry(self, names: tp.Union[str, tp.List[str]], arg_keys=None):
         if not isinstance(names, list):
             names = [names]
@@ -86,9 +86,9 @@ class ClassRegistry:
 
             return obj
         return decorator
-
+        
     def __contains__(self, name: str):
         return name in self.args.keys()
-
+        
     def __repr__(self):
         return f"{list(self.args.keys())}"

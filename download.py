@@ -18,20 +18,15 @@ def download(source: str, destination: str) -> None:
 
 
 def unzip(path: str, res_path: str):
-    subprocess.run(
-        ['unzip', path, '-d', res_path]
-    )
+    subprocess.run(['unzip', path, '-d', res_path])
 
 
 def bzip2(path: str):
-    subprocess.run(
-        ['bzip2', '-d', path]
-    )
+    subprocess.run(['bzip2', '-d', path])
 
+    
 def rm_file(path: str):
-    subprocess.run(
-        ['rm', path]
-    )
+    subprocess.run(['rm', path])
 
 
 def load_stylegan2_weights(source, destdir, tmp_name='test.zip'):

@@ -2,20 +2,14 @@ exp:
   config_dir: /Users/vadimtitov/CLIPResearch/configs/
   config: multidomain.yaml
   project: PaperMapperGeneralisation
-  name: MixedChannelIN_fixed_convex_hull
+  name: TEst
   tags: 
     - mapper
   seed: 12
   root: .
   notes: empty notes
-  step_save: 250
-  trainer: random_multiple_domain_adaptation
-  multi_gpu: true
-  device_ids:
-    - 0
-    - 1
-    - 2
-    - 3
+  step_save: 1000
+  trainer: td_multiple_resample_and_convex
 training:
   iter_num: 10000
   batch_size: 96
@@ -27,9 +21,9 @@ training:
   test_domain_list: text_domains/domain_list_20.txt
   mixing_noise: 0.9
 convex_hull:
-  do: false
+  do: true
 resample:
-  do: false
+  do: true
   divergence: 0.95
 mapper_config:
   backbone_type: shared
