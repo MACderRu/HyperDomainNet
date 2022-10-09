@@ -1,9 +1,8 @@
-# HyperDomainNet
-Official paper repository
+# HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks (NeurIPS 2022)
 
 
 > **HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks**<br>
-> Aibek Alanov*, Vadim Titov*, Dmitriy Vetrov <br>
+> Aibek Alanov*, Vadim Titov*, Dmitry Vetrov <br>
 > *Equal contribution <br>
 > https://arxiv.org/abs/ <br>
 >
