@@ -3,16 +3,14 @@ import math
 import PIL
 import scipy.ndimage
 import clip
-import dlib
+# import dlib
 import torch
+import torch.nn as nn
 import random
 import numpy as np
 import torchvision.transforms as transforms
-from torch import nn as nn
 
-from core.uda_models import OffsetsTunningGenerator
-from core.mappers import mapper_registry
-from core.parametrizations import BaseParametrization
+
 
 
 def requires_grad(model, flag=True):
@@ -341,7 +339,7 @@ def get_trainable_model_state(config, state_dict):
         ckpt = {
             "model_type": "mapper",
             "mapper_config": config.training.mapper_config,
-            "patch_key": config.training.patch_key
+            "patch_key": config.training.patch_key,
             "state_dict": state_dict,
         }
     else:
@@ -352,35 +350,32 @@ def get_trainable_model_state(config, state_dict):
             "state_dict": state_dict
         }
     
-    sg2_params = 
-    ckpt['sg_2_params'] = {
-        
-    }
+    ckpt['sg_2_params'] = dict(config.generator_args['stylegan2'])
     return ckpt
 
 
-def build_from_checkpoint(ckpt, generator_size=1024, generator_latent_dim=512, generator_nmlp=8):
-    assert ckpt['model_type'] in ['original', 'mapper', 'parametrization']
+# def build_from_checkpoint(ckpt, generator_size=1024, generator_latent_dim=512, generator_nmlp=8):
+#     assert ckpt['model_type'] in ['original', 'mapper', 'parametrization']
 
-    if ckpt['model_type'] == "original":
-        model = OffsetsTunningGenerator(
-            img_size=generator_size,
-            latent_size=generator_latent_dim,
-            map_layers=generator_nmlp
-        )
-        model.generator.load_state_dict(ckpt['state_dict'])
-    elif ckpt['model_type'] == "mapper":
-        model = mapper_registry[ckpt['mapper_type']](
-            ckpt['mapper_config'],
-            get_stylegan_conv_dimensions(generator_size)
-        )
+#     if ckpt['model_type'] == "original":
+#         model = OffsetsTunningGenerator(
+#             img_size=generator_size,
+#             latent_size=generator_latent_dim,
+#             map_layers=generator_nmlp
+#         )
+#         model.generator.load_state_dict(ckpt['state_dict'])
+#     elif ckpt['model_type'] == "mapper":
+#         model = mapper_registry[ckpt['mapper_type']](
+#             ckpt['mapper_config'],
+#             get_stylegan_conv_dimensions(generator_size)
+#         )
 
-        model.load_state_dict(ckpt['state_dict'])
-    else:
-        model = BaseParametrization(
-            ckpt['base_head_key'],
-            get_stylegan_conv_dimensions(generator_size)
-        )
-        model.load_state_dict(ckpt['state_dict'])
+#         model.load_state_dict(ckpt['state_dict'])
+#     else:
+#         model = BaseParametrization(
+#             ckpt['base_head_key'],
+#             get_stylegan_conv_dimensions(generator_size)
+#         )
+#         model.load_state_dict(ckpt['state_dict'])
 
-    return model
+#     return model

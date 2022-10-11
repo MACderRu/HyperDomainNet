@@ -26,13 +26,13 @@ class ChannelInKernel(nn.Module):
     def __init__(self, conv_dimension):
         super().__init__()
         c_in, c_out = conv_dimension
-        self.ch_in_wise_shift = nn.Parameter(torch.zeros(1, 1, c_in, 1, 1))
-        self.kernel_shift = nn.Parameter(torch.zeros(1, 1, 1, 3, 3))
+        self.params_in = nn.Parameter(torch.zeros(1, 1, c_in, 1, 1))
+        self.params_kernel = nn.Parameter(torch.zeros(1, 1, 1, 3, 3))
 
     def forward(self):
         return {
-            "in": self.ch_in_wise_shift,
-            "kernel": self.kernel_shift
+            "in": self.params_in,
+            "kernel": self.params_kernel
         }
 
 
@@ -41,13 +41,13 @@ class ChannelOutKernel(nn.Module):
     def __init__(self, conv_dimension):
         super().__init__()
         c_in, c_out = conv_dimension
-        self.ch_out_wise_shift = nn.Parameter(torch.zeros(1, c_out, 1, 1, 1))
-        self.kernel_shift = nn.Parameter(torch.zeros(1, 1, 1, 3, 3))
+        self.params_out = nn.Parameter(torch.zeros(1, c_out, 1, 1, 1))
+        self.params_kernel = nn.Parameter(torch.zeros(1, 1, 1, 3, 3))
 
     def forward(self):
         return {
-            "out": self.ch_out_wise_shift,
-            "kernel": self.kernel_shift
+            "out": self.params_out,
+            "kernel": self.params_kernel
         }
     
 
@@ -56,11 +56,11 @@ class ChannelOut(nn.Module):
     def __init__(self, conv_dimension):
         super().__init__()
         c_in, c_out = conv_dimension
-        self.ch_out_wise_shift = nn.Parameter(torch.zeros(1, c_out, 1, 1, 1))
+        self.params_out = nn.Parameter(torch.zeros(1, c_out, 1, 1, 1))
 
     def forward(self):
         return {
-            "out": self.ch_out_wise_shift
+            "out": self.params_out
         }
 
 
@@ -110,13 +110,13 @@ class ChannelSplit(nn.Module):
     def __init__(self, conv_dimension):
         super().__init__()
         c_in, c_out = conv_dimension
-        self.ch_out_wise_shift = nn.Parameter(torch.zeros(1, c_out, 1, 1, 1))
-        self.ch_in_wise_shift = nn.Parameter(torch.zeros(1, 1, c_in, 1, 1))
+        self.params_out = nn.Parameter(torch.zeros(1, c_out, 1, 1, 1))
+        self.params_in = nn.Parameter(torch.zeros(1, 1, c_in, 1, 1))
 
     def forward(self):
         return {
-            "in": self.ch_in_wise_shift,
-            "out": self.ch_out_wise_shift
+            "in": self.params_in,
+            "out": self.params_out
         }
 
 
@@ -125,11 +125,11 @@ class ChannelIn(nn.Module):
     def __init__(self, conv_dimension):
         super().__init__()
         c_in, c_out = conv_dimension
-        self.ch_in_wise_shift = nn.Parameter(torch.zeros(1, 1, c_in, 1, 1))
+        self.params_in = nn.Parameter(torch.zeros(1, 1, c_in, 1, 1))
 
     def forward(self):
         return {
-            "in": self.ch_in_wise_shift
+            "in": self.params_in
         }
 
 
