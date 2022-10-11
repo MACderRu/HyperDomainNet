@@ -10,13 +10,17 @@
 
 ## Description
 Official Implementation of HyperDomainNet, a method of domain adaptation technique utilizes both text-driven and one-shot setups.
-Our method uses types of 
 
-There are two type of models: 
-- Latent vector optimization.
-- Latent mapper, trained to manipulate latent vectors according to a specific text description.
-- Global directions in the StyleSpace.
+Our method consist of several types of adaptation setups: 
+- text-driven single domain adaptation
+- image2image domain adaptation
+- HyperDomainNet for any textual description
+- HyperDomainNet for any given image (would be improved in future research).
 
+There are three type of models: 
+- Fine-tuned aligned child generator.
+- Specific target domain modulation operator.
+- Universal HyperDomainNet.
 
 ## Updates
 
