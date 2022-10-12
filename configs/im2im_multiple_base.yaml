@@ -19,7 +19,7 @@ training:
   device: cuda:0
   generator: stylegan2
   patch_key: cin_mult
-  train_styles: image_domains.txt
+  train_styles: image_domains/image_domains.txt
   mixing_noise: 0.9
 mapper_config:
   backbone_type: shared
