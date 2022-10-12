@@ -1,10 +1,10 @@
 exp:
   config_dir: configs
   config: td_single_ffhq.yaml
-  project: ReportParts
+  project: Test
   tags:
     - stylespace
-  name: TestEval
+  name: Test
   seed: 12
   root: .
   notes: empty notes
@@ -17,7 +17,7 @@ training:
   device: cuda:0
   generator: stylegan2
   phase: mapping
-  patch_key: s_delta
+  patch_key: cin_mult
   source_class: Photo
   target_class: 3D Render in the Style of Pixar
   auto_layer_k: 16
@@ -41,13 +41,6 @@ optimization_setup:
     - 0.999
 generator_args:
   checkpoint_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
-evaluation:
-  is_on: true
-  vision_models:
-    - ViT-L/14
-  step: 20
-  data_size: 500
-  batch_size: 12
 logging:
   log_every: 10
   log_images: 20

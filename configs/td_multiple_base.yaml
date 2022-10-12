@@ -1,8 +1,8 @@
 exp:
   config_dir: /Users/vadimtitov/CLIPResearch/configs/
   config: multidomain.yaml
-  project: TestEvaluation
-  name: test
+  project: Test
+  name: Test
   tags: 
     - mapper
   seed: 12
@@ -19,7 +19,6 @@ training:
   train_domain_list: text_domains/domain_list_20.txt
   test_domain_list: text_domains/domain_list_20.txt
   mixing_noise: 0.9
-  auto_layer_iters: 0
 mapper_config:
   backbone_type: shared
   mapper_type: residual_channelin
@@ -54,13 +53,6 @@ logging:
   image_embedding_log: false
   truncation: 0.7
   num_grid_outputs: 1
-evaluation:
-  is_on: true
-  vision_models:
-    - ViT-L/14
-  step: 1000
-  data_size: 1000
-  batch_size: 50
 checkpointing:
   is_on: false
   start_from: false

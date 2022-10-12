@@ -10,7 +10,7 @@ from gan_models.StyleGAN2.offsets_model import (
     StyleModulatedConv2d
 )
 
-from core.stylegan_patches import decomposition_patches, modulation_patches, style_patches
+from core.stylegan_patches import decomposition_patches, modulation_patches
 
 uda_models = ClassRegistry()
 

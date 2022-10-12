@@ -13,7 +13,7 @@ from gan_models.StyleGAN2.model import (
     NoiseInjection, ConstantInput, ToRGB
 )
 
-from core.stylegan_patches import modulation_patches, decomposition_patches, style_patches
+from core.stylegan_patches import modulation_patches, decomposition_patches
 
 
 class ModModulatedConv2d(nn.Module):

@@ -46,7 +46,7 @@ class LoggingManager:
     def _init_local_dir(self):
         cached_latents_dir = Path('image_domains/cached_latents')
         cached_latents_dir.mkdir(exist_ok=True)
-        self.cached_latents_local_path = str(cached_latents_dir)
+        self.cached_latents_local_path = cached_latents_dir
 
         project_root = Path(__file__).resolve().parent.parent.parent
         exp_path = get_valid_exp_dir_name(project_root, self.config.exp.name)

@@ -30,7 +30,6 @@ from core.utils.math_utils import (
 from core.utils.image_utils import BicubicDownSample, t2im, construct_paper_image_grid, crop_augmentation
 from core.parametrizations import BaseParametrization
 from core.mappers import mapper_registry
-from core.evaluation import Evaluator, MTGEvaluator
 from core.utils.II2S import II2S
 from core.uda_models import uda_models
 from core.dataset import ImagesDataset
@@ -66,7 +65,6 @@ class BaseDomainAdaptationTrainer:
         self._setup_batch_generators()
         self._setup_source_generator()
         self._setup_loss()
-        self._setup_evaluator()
         self._initial_logging()
 
     def _setup_device(self):
@@ -107,7 +105,7 @@ class BaseDomainAdaptationTrainer:
 
         for idx, z in enumerate(self.zs_for_logging):
             images = self.forward_source(z)
-            self.logger.log_images(0, {f"src_domain_grids/{idx}": images})
+            self.logger.log_images(0, {f"src_domain_grids/{idx}": construct_paper_image_grid(images)})
     
     def _setup_optimizer(self):
         if self.config.training.patch_key == "original":
@@ -126,9 +124,6 @@ class BaseDomainAdaptationTrainer:
             self.optimizer = torch.optim.Adam(
                 self.trainable.parameters(), **self.config.optimization_setup.optimizer
             )
-    
-    def _setup_evaluator(self):
-        self.evaluator = Evaluator(self.config)
 
     # @classmethod
     # def from_ckpt(cls, ckpt_path):
@@ -168,10 +163,15 @@ class BaseDomainAdaptationTrainer:
         models_dict = get_trainable_model_state(
             self.config, self.trainable.state_dict()
         )
+        
+        models_dict.update(self.ckpt_info())
         torch.save(models_dict, str(
             Path(self.logger.models_dir) / f"models_{self.current_step}.pt"
         ))
-
+    
+    def ckpt_info(self):
+        return {}
+    
     def all_to_device(self, device):
         self.source_generator.to(device)
         self.trainable.to(device)
@@ -197,10 +197,6 @@ class BaseDomainAdaptationTrainer:
             if (self.current_step + 1) % self.config.exp.step_save == 0:
                 self.save_models()
 
-            if (self.current_step % self.config.evaluation.step == 0) and self.config.evaluation.is_on:
-                with Timer(iter_info, "evaluate"):
-                    self.evaluate(iter_info)
-
             if self.current_step % self.config.logging.log_images == 0:
                 with Timer(iter_info, "log_images"):
                     self.log_images()
@@ -214,27 +210,6 @@ class BaseDomainAdaptationTrainer:
 
         training_time_log.end()
         wandb.finish()
-
-    def evaluate(self, iter_info):
-        print("Evaluating...")
-        # TODO: logging
-        mapper_input = None
-        if hasattr(self, 'clip_mapper_encoder'):
-            mapper_input = self.reference_embeddings[self.clip_mapper_encoder]
-
-        if hasattr(self, 'target_domains'):
-            trg_doms = self.target_domains
-        else:
-            trg_doms = self.config.training.target_class
-        
-        metrics = self.evaluator.get_metrics(
-            self.source_generator,
-            self.trainable,
-            trg_doms,
-            mapper_input,
-        )
-
-        iter_info.update({f"metrics/{k}": v for k, v in metrics.items()})
 
     @torch.no_grad()
     def encode_text(self, model, text, templates):
@@ -395,7 +370,12 @@ class SingleDomainAdaptationTrainer(BaseDomainAdaptationTrainer):
 class TextDrivenSingleDomainAdaptationTrainer(SingleDomainAdaptationTrainer):
     def __init__(self, config):
         super().__init__(config)
-
+    
+    def ckpt_info(self):
+        return {
+            'da_type': 'td',
+        }
+    
     def setup(self):
         self._setup_base()
         self._setup_trainable()
@@ -451,25 +431,26 @@ class Image2ImageSingleDomainAdaptationTrainer(SingleDomainAdaptationTrainer):
         self.style_image_full_res = None
         self.style_image_resized = None
         self.style_image_inverted_A = None
-
+    
     def setup(self):
         self._setup_base()
         self._setup_trainable()
         self._setup_optimizer()
 
         self._setup_style_image()
-        self._setup_evaluator()
         self._log_target_images()
         self._setup_src_embeddings()
+    
+    def ckpt_info(self):
+        return {
+            'da_type': 'im2im',
+        }
     
     def _setup_src_embeddings(self):
         for visual_encoder, (model, preprocess) in self.batch_generators.items():
             self.reference_embeddings[visual_encoder][self.config.training.source_class] = self.encode_text(
                 model, self.config.training.source_class, ['A {}']
             )
-    
-    def _setup_evaluator(self):
-        self.evaluator = MTGEvaluator(self.config, image_based=True)
 
     def _setup_style_image(self):
         from core.style_embed_options import II2S_s_opts
@@ -496,18 +477,6 @@ class Image2ImageSingleDomainAdaptationTrainer(SingleDomainAdaptationTrainer):
         self.logger.log_images(
             0, {"style_image/orig": style_image_resized, "style_image/projected_A": st_im_inverted_A}
         )
-
-    def evaluate(self, iter_info):
-        metrics = self.evaluator.get_metrics(
-            self.source_generator,
-            self.trainable,
-            self.target_domains,
-            self.desc_to_embeddings,
-            self.latents,
-            self.mean_latent,
-        )
-
-        iter_info.update({f"metrics/{k}": v for k, v in metrics.items()})
 
     def calc_batch(self, sample_z):
         clip_data = {k: {} for k in self.batch_generators}
@@ -604,7 +573,6 @@ class MultipleDomainAdaptationTrainer(BaseDomainAdaptationTrainer):
         sampled_images, _ = self.source_generator(
             latents, offsets=offsets, **kwargs
         )
-
         return sampled_images, offsets
 
     def _setup_mapper_encoder_model(self):
@@ -616,7 +584,12 @@ class MultipleDomainAdaptationTrainer(BaseDomainAdaptationTrainer):
 class IM2IMMultipleBaseTraienr(MultipleDomainAdaptationTrainer):
     def __init__(self, config):
         super().__init__(config)
-
+    
+    def ckpt_info(self):
+        return {
+            'da_type': 'im2im',
+        }
+    
     def setup(self):
         self._setup_base()
         self._setup_mapper_encoder_model()
@@ -787,17 +760,10 @@ class TextDrivenMultiTrainer(MultipleDomainAdaptationTrainer):
         self._setup_trainable()
         self._setup_optimizer()
     
-    def evaluate(self, iter_info):
-        print("Evaluating...")
-        # TODO: logging
-        metrics = self.evaluator.get_metrics(
-            self.source_generator,
-            self.trainable,
-            self.target_domains_train,
-            self.mapper_train_inputs,
-        )
-
-        iter_info.update({f"metrics/{k}": v for k, v in metrics.items()})
+    def ckpt_info(self):
+        return {
+            'da_type': 'td',
+        }
     
     @torch.no_grad()
     def _read_domains(self, path, model, templates=imagenet_templates):
@@ -903,18 +869,13 @@ class TextDrivenMultiTrainer(MultipleDomainAdaptationTrainer):
         dict_to_log = {}
         for idx, z in enumerate(self.zs_for_logging):
             for test_description in descriptions:
-                # if self.config.exp.multi_gpu:
-                #     gpu_number = len(self.trainable.device_ids)
-                #     embedding_target = embedding_target.repeat(gpu_number, 1)
-
                 images, _ = self.forward_trainable(
                     z, self.mapper_test_inputs[test_description],
                     truncation=self.config.logging.truncation
                 )
-                images = construct_paper_image_grid(images)
 
                 dict_to_log.update({
-                    f"{event_log}/test_domain_grids/{test_description}/{idx}": images
+                    f"test_domain_grids/{test_description}/{idx}": construct_paper_image_grid(images)
                 })
 
         self.logger.log_images(self.current_step, dict_to_log)
@@ -939,124 +900,43 @@ class ParametrizationDomainAdaptationTrainer(TextDrivenMultiTrainer):
 
         frozen_img = self.forward_source(sample_z)
         batch_descs = np.random.choice(self.target_domains_train, size=self.config.training.batch_size)
+        src_batch_descs = [self.train_target_to_source_mapping[dom] for dom in batch_descs]
+        
         alphas = self.calc_alphas(self.config.training.batch_size, self.config.training.batch_size)
 
-        mapper_input_initial = torch.cat([self.mapper_train_inputs[dom] for dom in batch_descs], dim=0)
-        mapper_input_from_convex = convex_hull_small(mapper_input_initial, alphas)
+        mapper_input = torch.cat([self.mapper_train_inputs[dom] for dom in batch_descs], dim=0)
+        
+        if self.config.convex_hull.do:
+            mapper_input = convex_hull_small(mapper_input, alphas)
 
-        trainable_img, offsets = self.forward_trainable(sample_z, mapper_input_from_convex)
+        trainable_img, offsets = self.forward_trainable(sample_z, mapper_input)
 
         for enc_key, (model, preprocess) in self.batch_generators.items():
             if self.config.resample.do and enc_key != self.mapper_encoder_type:
+                clip_data.pop(enc_key)
                 continue
-
-            src_emb = torch.stack([self.reference_embeddings[enc_key][self.train_target_to_source_mapping[dom]] for dom in batch_descs], dim=0)
-            src_emb = convex_hull(src_emb, alphas)
-
-            trg_emb = torch.stack([self.reference_embeddings[enc_key][dom] for dom in batch_descs], dim=0)
-
-            trg_emb = resample_batch_templated_embeddings(trg_emb, self.config.training.resampling_cos_threshold)
-            trg_emb = convex_hull(trg_emb, alphas)
             
-            clip_data[enc_key]['src_emb_domain'] = src_emb
-            clip_data[enc_key]['trg_emb_domain'] = trg_emb
-            clip_data[enc_key]['trg_encoded'] = model.encode_image(
-                preprocess(crop_augmentation(trainable_img))
-            )
+            src_emb = torch.stack([self.reference_embeddings[enc_key][dom] for dom in src_batch_descs], dim=0)
+            trg_emb = torch.stack([self.reference_embeddings[enc_key][dom] for dom in batch_descs], dim=0)
+            
+            if self.config.convex_hull.do:
+                src_emb = convex_hull(src_emb, alphas)
+                trg_emb = convex_hull(trg_emb, alphas)
+            
+            if self.config.resample.do:
+                trg_emb = resample_batch_templated_embeddings(trg_emb, self.config.resample.divergence)
+            
+            clip_data[enc_key]['src_domain_emb'] = src_emb
+            clip_data[enc_key]['trg_domain_emb'] = trg_emb
             clip_data[enc_key]['src_encoded'] = model.encode_image(
                 preprocess(crop_augmentation(frozen_img))
             )
-
-        return {
-            'clip_data': clip_data,
-            'rec_data': None,
-            'offsets': offsets
-        }
-
-
-@trainer_registry.add_to_registry('td_multiple_style_content_same')
-class TextDrivenStyleContentSameProportion(TextDrivenMultiTrainer):
-    def _setup_domain_embeddings(self):
-        self.reference_embeddings = {
-            k: self._read_domains(self.config.training.train_domain_list, m)[0] for k, (m, p) in self.batch_generators.items()
-        }
-
-        # self.config.training.content_train_domain_list
-        # self.config.training.style_train_domain_list
-        # self.config.training.test_domain_list
-        # self.content_reference_descriptions = []
-        # self.style_reference_descriptions = []
-        # self.reference_embeddings = {k: {} for k in self.batch_generators}
-        # self.mapper_inputs = {}
-
-        self.mapper_train_content_inputs, self.train_content_target_to_source_mapping = \
-            self._read_domains(self.config.training.content_train_domain_list, self.mapper_encoder, ["{}"])
-        self.mapper_train_style_inputs, self.train_style_target_to_source_mapping = \
-            self._read_domains(self.config.training.style_train_domain_list, self.mapper_encoder, ["{}"])
-
-        self.target_domains_train = list(self.train_style_target_to_source_mapping.keys()) + \
-            list(self.train_content_target_to_source_mapping.keys())
-
-        self.mapper_test_inputs, self.test_target_to_source_mapping = \
-            self._read_domains(self.config.training.test_domain_list, self.mapper_encoder, ["{}"])
-        self.target_domains_test = list(self.test_target_to_source_mapping.keys())
-    
-    def calc_batch(self, sample_z):
-        clip_data = {k: {} for k in self.reference_embeddings}
-
-        frozen_img = self.forward_source(sample_z)
-
-        # Sample 50/50 style/content indexes
-        indexes_s = np.random.randint(len(self.style_reference_descriptions), size=self.config.training.batch_size // 2)
-        indexes_c = np.random.randint(len(self.content_reference_descriptions), size=self.config.training.batch_size // 2)
-        
-        reference_target = (
-                [self.content_reference_descriptions[ix][0] for ix in indexes_c] + 
-                [self.style_reference_descriptions[ix][0] for ix in indexes_s]
+            clip_data[enc_key]['trg_encoded'] = model.encode_image(
+                preprocess(crop_augmentation(trainable_img))
             )
-            
-        reference_source = (
-            [self.content_reference_descriptions[ix][1] for ix in indexes_c] + 
-            [self.style_reference_descriptions[ix][1] for ix in indexes_s]
-        )
-        
-        alphas = self.calc_alphas(
-            self.config.training.batch_size,
-            self.config.training.batch_size
-        )
 
-        # TODO: specify mapper embedding
-        mapper_input = torch.cat([self.reference_embeddings[self.mapper_encoder_type][t] for t in reference_target], dim=0)  # (b, dim)
-        
-        # resample - change domain, bigger cos_threshold
-        mapper_input = resample_batch_vectors(mapper_input, self.config.training.resampling_cos_threshold)
-        mapper_input = convex_hull_small(mapper_input, alphas)
-                
-        trainable_img, offsets = self.forward_trainable(sample_z, mapper_input)
-        model, preprocess = self.batch_generators[self.mapper_encoder_type]
-
-        src_emb = torch.cat([self.reference_embeddings[self.mapper_encoder_type][s] for s in reference_source], dim=0)
-        src_emb = convex_hull_small(src_emb, alphas)
-
-        augmented_src = torch.stack([resample_single_vector(t.unsqueeze(0), 0.95, n_vectors=50) for t in src_emb])
-        augmented_trg = torch.stack([resample_single_vector(t.unsqueeze(0), 0.95, n_vectors=50) for t in mapper_input])
-
-        clip_data[self.mapper_encoder_type]['src_emb_domain'] = augmented_src
-        clip_data[self.mapper_encoder_type]['trg_emb_domain'] = augmented_trg
-        clip_data[self.mapper_encoder_type]['trg_encoded'] = model.encode_image(
-            preprocess(trainable_img)
-        )
-        clip_data[self.mapper_encoder_type]['src_encoded'] = model.encode_image(
-            preprocess(frozen_img)
-        )
-        
         return {
             'clip_data': clip_data,
             'rec_data': None,
             'offsets': offsets
         }
-
-    @torch.no_grad()
-    def log_images(self, event_log=''):
-        self.trainable.eval()
-        self._log_images_multi(self.target_domains_test)

@@ -153,13 +153,13 @@ def target_target_direction(
 ) -> torch.Tensor:
 
     mask = torch.from_numpy(get_tril_elements_mask(trg_encoded.size(0)))
+    
     deltas_text = (trg_domain_emb.unsqueeze(0) - trg_domain_emb.unsqueeze(1))[mask]
-        
     deltas_img = (trg_encoded.unsqueeze(0) - trg_encoded.unsqueeze(1))[mask]
     
     zero_mask_im = torch.isclose(deltas_img.sum(dim=1).float(), torch.tensor(0.).float())
-    zero_mask_t = torch.isclose(deltas_text.sum(dim=1).float(), torch.tensor(0.).float())
-    
+    zero_mask_t = torch.isclose(deltas_text.sum(dim=1).sum(dim=1).float(), torch.tensor(0.).float())
+
     non_zeromask = ~(zero_mask_im & zero_mask_t)
         
     if trg_domain_emb.ndim == 3:

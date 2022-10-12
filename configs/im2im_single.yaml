@@ -1,8 +1,8 @@
 exp:
   config_dir: configs
   config: im2im_single.yaml
-  project: Rebuttle_same_mtg
-  name: ElsaStylized
+  project: Test
+  name: Test
   seed: 0
   root: .
   notes: empty notes
@@ -16,9 +16,9 @@ training:
   device: cuda:0
   generator: stylegan2
   phase: mapping
-  patch_key: s_mod
+  patch_key: cin_mult
   source_class: Real Person
-  target_class: ./Sber_colab/StylisedImages/disney_princess.jpg
+  target_class: image_domains/mermaid.png
   auto_layer_k: 16
   auto_layer_iters: 0
   auto_layer_batch: 8
@@ -48,16 +48,6 @@ optimization_setup:
     - 0.999
 generator_args:
   checkpoint_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
-evaluation:
-  is_on: false
-  vision_models:
-    - ViT-B/32
-    - ViT-B/16
-  step: 200
-  data_size: 500
-  batch_size: 24
-  fid: true
-  fid_ref: ../few-shot-gan-adaptation/sketches_all_resized/
 logging:
   log_every: 10
   log_images: 20

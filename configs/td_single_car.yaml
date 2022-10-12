@@ -1,10 +1,10 @@
 exp:
   config_dir: configs
   config: td_single_car.yaml
-  project: TestRefactor
+  project: Test
   tags:
     - after demodulation
-  name: test_car_indomain
+  name: Test
   seed: 0
   root: .
   notes: empty notes
@@ -44,14 +44,6 @@ optimization_setup:
 generator_args:
   checkpoint_path: pretrained/StyleGAN2/stylegan2-car-config-f.pt
   img_size: 512
-evaluation:
-  is_on: false
-  vision_models:
-    - ViT-B/32
-    - ViT-L/14
-  step: 100000
-  data_size: 500
-  batch_size: 24
 logging:
   log_every: 10
   log_images: 20

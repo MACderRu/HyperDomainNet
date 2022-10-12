@@ -36,14 +36,14 @@ def load_config():
     generator_args = get_generator_args(
         config_file.training.generator, 
         base_gen_args_config.generator_args[config_file.training.generator],
-        conf_generator_args.generator_args
+        config_file.generator_args
     )
     
     gen_args = OmegaConf.create({
         'generator_args': generator_args
     })
     
-    config = OmegaConf.merge(conf_file, conf_cli)
+    config = OmegaConf.merge(config_file, conf_cli)
     config = OmegaConf.merge(
         config,
         gen_args

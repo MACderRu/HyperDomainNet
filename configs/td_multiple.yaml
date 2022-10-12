@@ -1,8 +1,8 @@
 exp:
   config_dir: /Users/vadimtitov/CLIPResearch/configs/
   config: multidomain.yaml
-  project: PaperMapperGeneralisation
-  name: TEst
+  project: TdMultiple
+  name: Test
   tags: 
     - mapper
   seed: 12
@@ -12,12 +12,11 @@ exp:
   trainer: td_multiple_resample_and_convex
 training:
   iter_num: 10000
-  batch_size: 96
+  batch_size: 8
   device: cuda:0
   generator: stylegan2
   patch_key: cin_mult
-  content_train_domain_list: text_domains/mixed_train_domains.txt
-  style_train_domain_list: text_domains/domain_list_20.txt
+  train_domain_list: text_domains/domain_list_20.txt
   test_domain_list: text_domains/domain_list_20.txt
   mixing_noise: 0.9
 convex_hull:
@@ -31,8 +30,8 @@ mapper_config:
   activation: relu
   input_dimension: 512
   width: 512
-  head_depth: 5
-  backbone_depth: 10
+  head_depth: 2
+  backbone_depth: 4
   no_coarse: false
   no_fine: false
   no_medium: false
@@ -50,10 +49,10 @@ optimization_setup:
     weight_decay: 0.0
     lr: 0.00005
     betas:
-    - 0.0
+    - 0.9
     - 0.999
-generator_setup:
-  weights_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
+generator_args:
+  checkpoint_path: pretrained/StyleGAN2/stylegan2-ffhq-config-f.pt
 logging:
   log_every: 10
   log_images: 100
@@ -61,13 +60,6 @@ logging:
   image_embedding_log: false
   truncation: 0.7
   num_grid_outputs: 1
-evaluation:
-  is_on: false
-  vision_models:
-    - ViT-L/14
-  step: 1000
-  data_size: 500
-  batch_size: 50
 checkpointing:
   is_on: false
   start_from: false
