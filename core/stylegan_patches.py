@@ -6,7 +6,6 @@ from core.utils.class_registry import ClassRegistry
 
 modulation_patches = ClassRegistry()
 decomposition_patches = ClassRegistry()
-style_patches = ClassRegistry()
 
 
 class Patch(nn.Module):
@@ -17,102 +16,6 @@ class Patch(nn.Module):
     def to(self, device):
         super().to(device)
 
-        
-@style_patches.add_to_registry('s_mod')
-class StyleMod(Patch):
-    def __init__(self, conv_weight: torch.Tensor):
-        super().__init__()
-        self.shape = conv_weight.shape
-        _, self.c_out, self.c_in, k_x, k_y = self.shape
-        self.register_buffer('ones', torch.ones((1, self.c_in)))
-        
-    def forward(self, style, offsets):
-        mult = self.ones + offsets['in']
-        return style * mult
-    
-    def style_space(self):
-        return 's'
-
-
-@style_patches.add_to_registry('s_linear')
-class StyleAffine(Patch):
-    def __init__(self, conv_weight: torch.Tensor):
-        super().__init__()
-        self.shape = conv_weight.shape
-        _, self.c_out, self.c_in, k_x, k_y = self.shape
-        self.register_buffer('ones', torch.ones((1, self.c_in)))
-        
-    def forward(self, style, offsets):
-        mult = self.ones + offsets['gamma']
-        return style * mult + offsets['shift']
-    
-    def style_space(self):
-        return 's'
-    
-    
-@style_patches.add_to_registry('s_affine')
-class StyleAffine(Patch):
-    def __init__(self, conv_weight: torch.Tensor):
-        super().__init__()
-        self.shape = conv_weight.shape
-        _, self.c_out, self.c_in, k_x, k_y = self.shape
-        self.register_buffer('ones', torch.ones((1, self.c_in)))
-        
-    def forward(self, style, offsets):
-        return style @ offsets['A'] + offsets['shift']
-    
-    def style_space(self):
-        return 's'
-
-
-@style_patches.add_to_registry('s_delta')
-class StyleDelta(Patch):
-    def __init__(self, conv_weight: torch.Tensor):
-        super().__init__()
-        self.shape = conv_weight.shape
-        _, self.c_out, self.c_in, k_x, k_y = self.shape
-        
-    def forward(self, style, offsets):
-        return style + offsets['in']
-    
-    def style_space(self):
-        return 's'
-    
-
-@style_patches.add_to_registry('w_mod')
-class WMod(Patch):
-    def __init__(self, conv_weight: torch.Tensor):
-        super().__init__()
-        self.shape = conv_weight.shape
-        _, self.c_out, self.c_in, k_x, k_y = self.shape
-        self.register_buffer('ones', torch.ones((1, 512)))
-        
-    def forward(self, style, offsets):
-        mult = self.ones + offsets['in']
-        return style * mult
-    
-    def style_space(self):
-        return 'w'
-    
-
-@style_patches.add_to_registry('w_affine')
-class WAffine(Patch):
-    def __init__(self, conv_weight: torch.Tensor):
-        super().__init__()
-        
-    def forward(self, style, offsets):
-        return style @ offsets['A']
-    
-    def style_space(self):
-        return 'w'
-    
-    
-    
-# @style_patches.add_to_registry('style_delta')
-# class StyleReweightMod(BaseStyleModulationPatch):
-#     def forward(self, style, offsets):
-#         return style + offsets['in']
-    
 
 class BaseModulationPatch(Patch):
     def __init__(self, conv_weight: torch.Tensor):
