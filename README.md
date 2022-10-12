@@ -67,7 +67,7 @@ Here, we provide the code for using pretrained checkpoints for inference.
 
 ### Setup
 
-Pretrained models for variuos stylisation are provided. Please refer to `download.py` with flags `--td_single` or `--im2im_single`. First option downloads text-driven single domain adaptation pretrained checkpoints, second is for one-shot domain adaptation models.
+Pretrained models for various stylisation are provided. Please refer to `download.py` with flags `--td_single` or `--im2im_single`. First option downloads text-driven single domain adaptation pretrained checkpoints, second is for one-shot domain adaptation models.
 
 ### Usage
 
