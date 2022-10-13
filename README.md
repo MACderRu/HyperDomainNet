@@ -1,5 +1,6 @@
 # HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks (NeurIPS 2022)
 
+Editing Playground: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1QMylWjzPxvHtxm74U4lWRQXwquw5AaFL#scrollTo=si2tLKYLT-kV)
 
 > **HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks**<br>
 > Aibek Alanov*, Vadim Titov*, Dmitry Vetrov <br>
