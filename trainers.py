@@ -651,7 +651,7 @@ class IM2IMMultipleBaseTraienr(MultipleDomainAdaptationTrainer):
         self.logger.log_images(
             0, log_data
         )
-
+    
     def calc_batch(self, sample_z):
         clip_data = {
             k: {} for k in self.batch_generators
@@ -670,9 +670,8 @@ class IM2IMMultipleBaseTraienr(MultipleDomainAdaptationTrainer):
 
         trg_embeddings = torch.cat([self.mapper_embeddings[d] for d in batch_styles], dim=0)
 
-        offsets = self.trainable(trg_embeddings)
-        trainable_img = self.forward_trainable(sample_z, offsets)
-        style_image_inverted_B = self.forward_trainable([st_lat], offsets)
+        trainable_img, offsets = self.forward_trainable(sample_z, trg_embeddings)
+        style_image_inverted_B, _ = self.forward_trainable([st_lat], trg_embeddings)
 
         for enc_key, (model, preprocess) in self.batch_generators.items():
             trg_encoded = self.clip_encode_image(model, trainable_img, preprocess)
@@ -719,7 +718,8 @@ class IM2IMMultipleBaseTraienr(MultipleDomainAdaptationTrainer):
                 tmp_latents = w_styles[0].unsqueeze(1).repeat(1, 18, 1)
                 gen_mean = self.source_generator.mean_latent.unsqueeze(1).repeat(1, 18, 1)
                 style_mixing_latents = self.config.logging.truncation * (tmp_latents - gen_mean) + gen_mean
-                style_mixing_latents[:, 7:, :] = self.style_image_latents[:, 7:, :]
+                st_latents, _, _, _ = self.name_to_info[im_name]
+                style_mixing_latents[:, 7:, :] = st_latents[:, 7:, :]
 
                 style_mixing_imgs, offsets = self.forward_trainable(
                     [style_mixing_latents],

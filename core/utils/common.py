@@ -3,7 +3,7 @@ import math
 import PIL
 import scipy.ndimage
 import clip
-# import dlib
+import dlib
 import torch
 import torch.nn as nn
 import random

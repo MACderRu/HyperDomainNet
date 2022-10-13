@@ -11,6 +11,7 @@ from core.utils.loss_utils import (
     get_tril_elements_mask
 )
 from core.utils.class_registry import ClassRegistry
+from functools import lru_cache
 
 
 clip_loss_registry = ClassRegistry()
@@ -156,16 +157,11 @@ def target_target_direction(
     
     deltas_text = (trg_domain_emb.unsqueeze(0) - trg_domain_emb.unsqueeze(1))[mask]
     deltas_img = (trg_encoded.unsqueeze(0) - trg_encoded.unsqueeze(1))[mask]
-    
-    zero_mask_im = torch.isclose(deltas_img.sum(dim=1).float(), torch.tensor(0.).float())
-    zero_mask_t = torch.isclose(deltas_text.sum(dim=1).sum(dim=1).float(), torch.tensor(0.).float())
-
-    non_zeromask = ~(zero_mask_im & zero_mask_t)
         
     if trg_domain_emb.ndim == 3:
         deltas_text = deltas_text.mean(dim=1)
     
-    res_loss = cosine_loss(deltas_img[non_zeromask].float(), deltas_text[non_zeromask].float())
+    res_loss = cosine_loss(deltas_img.float(), deltas_text.float())
     
     return res_loss.mean()
 
@@ -210,14 +206,18 @@ def l2_rec(
     ).mean()
 
 
+@lru_cache(maxsize=1)
+def get_model():
+    return lpips.PerceptualLoss(model="net-lin", net="vgg", use_gpu=True)
+
+
 @rec_loss_registry.add_to_registry('lpips_rec')
 def lpips_rec(
     batch: tp.Dict[str, torch.Tensor]
 ):
-    if hasattr(lpips_rec, '_model'):
-        lpips_rec._model = lpips.PerceptualLoss(model="net-lin", net="vgg", use_gpu=True)
+    model = get_model()
     
-    return lpips_rec._model(
+    return model(
         batch['rec_data']['style_inverted_B_256x256'],
         batch['rec_data']['style_image_256x256']
     ).mean()

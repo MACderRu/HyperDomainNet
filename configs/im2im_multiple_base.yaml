@@ -15,7 +15,7 @@ generalisation:
   mixing_noise: 0.9
 training:
   iter_num: 800
-  batch_size: 12
+  batch_size: 8
   device: cuda:0
   generator: stylegan2
   patch_key: cin_mult
