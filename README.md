@@ -102,7 +102,7 @@ Given a pretrained checkpoint for certain target domain, one can be evaluated th
 
 Main idea is based on one-shot (text-drive, image2image) methods [StyleGAN-NADA](https://arxiv.org/abs/2108.00946) and [MindTheGap](https://arxiv.org/abs/2110.08398).
 
-To edit real images, we inverted them to the StyleGAN's latent space using [pSp](https://github.com/eladrich/pixel2style2pixel).
+To edit real images, we inverted them to the StyleGAN's latent space using [ReStyle](https://github.com/yuval-alaluf/restyle-encoder).
 
 ## Citation
 
