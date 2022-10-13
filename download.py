@@ -109,7 +109,7 @@ loaders = {
 
 
 @click.command()
-@click.option('--load_type', default=None, help='The person to greet.')
+@click.option('--load_type', default=None)
 def main(load_type):
     destination = Path(__file__).parent / 'pretrained'
     destination.mkdir(exist_ok=True)
