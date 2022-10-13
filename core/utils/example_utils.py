@@ -88,8 +88,8 @@ class Inferencer(nn.Module):
     def _mtg_mixing_noise(self, latents, truncation=1):
         w_styles = latents[0]
         
-        if w_style.ndim == 2:
-            w_style = w_style.unsqueeze(1).repeat(1, 18, 1)
+        if w_styles.ndim == 2:
+            w_styles = w_styles.unsqueeze(1).repeat(1, 18, 1)
         
         gen_mean = self.sg2_source.mean_latent.unsqueeze(1).repeat(1, 18, 1)
         style_mixing_latents = truncation * (w_styles - gen_mean) + gen_mean
