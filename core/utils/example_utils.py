@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import torch
 import torch.nn as nn
@@ -6,7 +7,7 @@ import torch.nn.functional as F
 from torchvision import transforms
 from torchvision.utils import make_grid
 from core.uda_models import uda_models
-from core.utils.common import get_trainable_model_state, get_stylegan_conv_dimensions
+from core.utils.common import get_trainable_model_state, get_stylegan_conv_dimensions, align_face
 from core.parametrizations import BaseParametrization
 from core.mappers import mapper_registry
 from restyle_encoders.psp import pSp
@@ -173,7 +174,7 @@ def load_inversion_model(inversion_args):
 def run_alignment(image_path):
     import dlib
     if not os.path.exists("pretrained/shape_predictor_68_face_landmarks.dat"):
-        print('dlib shape predictor is not downloaded; launch `python download.py --model=dlib`')
+        print('dlib shape predictor is not downloaded; launch `python download.py --load_type=dlib`')
     predictor = dlib.shape_predictor("pretrained/shape_predictor_68_face_landmarks.dat")
     aligned_image = align_face(filepath=image_path, predictor=predictor) 
     print("Aligned image has shape: {}".format(aligned_image.size))
