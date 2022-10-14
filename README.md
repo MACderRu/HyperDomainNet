@@ -18,16 +18,11 @@ Editing Playground: [![Open In Colab](https://colab.research.google.com/assets/c
     + [Dependencies](#dependencies)
   * [Training](#model-training)
   * [Inference](#pretrained-model-inference)
-  * [Editing](#editing)
-  * [Evaluation](#evaluation)
-  * [Pretrained Models](#pretrained-models)
-    + [ReStyle-pSp](#restyle-psp)
-    + [ReStyle-e4e](#restyle-e4e)
-    + [Auxiliary Models](#auxiliary-models)
+  * [Editing](#real-image-editing)
+  * [Evaluation](#model-evaluation)
   * [Related Works](#related-works)
   * [Citation](#citation)
-
-
+  
 ## Description
 Official Implementation of HyperDomainNet, a method of domain adaptation technique utilizes both text-driven and one-shot setups.
 
