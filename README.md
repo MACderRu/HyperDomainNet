@@ -23,6 +23,21 @@ There are three type of models:
 - Specific target domain modulation operator.
 - Universal HyperDomainNet.
 
+## Table of Contents
+  * [Description](##description)
+  * [Getting Started](##getting-started)
+    + [Prerequisites](#prerequisites)
+    + [Installation](#installation)
+  * [Training](#training)
+  * [Pretrained Models](#pretrained-models)
+    + [ReStyle-pSp](#restyle-psp)
+    + [ReStyle-e4e](#restyle-e4e)
+    + [Auxiliary Models](#auxiliary-models)
+  * [Inference Notebooks](#inference-notebooks)
+  * [Editing](#editing)
+  * [Related Works](##related-works)
+  * [Citation](#citation)
+
 ## Updates
 
 **12/10/2022** Initial version
@@ -48,27 +63,112 @@ pip install git+https://github.com/openai/CLIP.git
 Here, the code relies on the [Rosinality](https://github.com/rosinality/stylegan2-pytorch/) pytorch implementation of StyleGAN2.
 Some parts of the StyleGAN implementation were modified, so that the whole implementation is native pytorch. 
 
-In addition to the requirements mentioned before, a pretrained StyleGAN2 generator will attempt to be downloaded with script *download.py*. All base requirements could be installed via 
+In addition to the requirements mentioned before, a pretrained StyleGAN2 generator will attempt to be downloaded with script *download.py --load_type=stylegan2*. All base requirements could be installed via 
 
 ```shell
-./setup_environment.sh
+!pip install -r requirements.txt
+!python download.py
 ```
 
 ## Model training
 
-Here, we provide the code for the training. Each model is trained according its config setup. Config explanation could be found in `examples/train_example.ipynb`.
+Here, we provide the code for the training.
+
+In general trainind could be launched by following command
+
+```
+python main.py exp.config={config_name}
+```
+
+### ***Config setup***
+
+#### exp:
+  * config_dir: configs
+  * config: td_single_ffhq.yaml
+  * project: WandbProjectName
+  * tags:
+        - tag1
+        - tag2
+  * name: WandbRunName
+  * seed: 0
+  * root: .
+  * notes: empty notes
+  * step_save: 20  -  __model saving frequency__
+  * trainer: td_single
+  
+#### training:
+  * iter_num: 400 --- number of training iterations
+  * batch_size: 4
+  * device: cuda:0
+  * generator: stylegan2
+  * patch_key: s_delta
+  * phase: mapping  --- __which type of stylegan2 generator is fine-tuned, only used when 'patch_key' != 'original'__
+  * source_class: Photo
+  * target_class: 3D Render in the Style of Pixar
+  * auto_layer_k: 16
+  * auto_layer_iters: 0 --- __number of iterations for adaptive corresponding stylegan2 layer freeze__
+  * auto_layer_batch: 8
+  * mixing_noise: 0.9
+
+#### optimization_setup:
+  * visual_encoders: --- __clip encoders that are used for clip based losses__
+        - ViT-B/32
+        - ViT-B/16
+  * loss_funcs:
+        - direction
+  * loss_coefs:
+        - 1.0
+  * g_reg_every: 4  ---  __stylegan2 regularization coefficient__
+  * optimizer:  ---  __optimizer hyperparameters for trainable model__
+    * weight_decay: 0.0
+    * lr: 0.1
+    * betas:
+      - 0.9
+      - 0.999
+
+#### logging:
+  * log_every: 10  ---  __metric logging step__
+  * log_images: 20  ---  __images logging step__
+  * latents_to_edit: []
+  * truncation: 0.7  ---  __truncation during images logging__
+  * num_grid_outputs: 1  ---  __number of logging grids__
+
+#### checkpointing:
+  * is_on: false
+  * start_from: false
+  * step_backup: 100000
 
 ### Usage
 
-When training ends model checkpoints could be found in `local_logged_exps/`. Each `ckpt_name.pt` could be inferenced using a helper classes `InferenceWrapper` in `core/utils/example_utils`.
+When training ends model checkpoints could be found in `local_logged_exps/`. Each `ckpt_name.pt` could be inferenced using a helper classes `Inferencer` in `core/utils/example_utils`.
 
-## Generating data from target domain  
+## Pretrained model Inference
 
 Here, we provide the code for using pretrained checkpoints for inference.
 
 ### Setup
 
-Pretrained models for various stylisation are provided. Please refer to `download.py` with flags `--td_single` or `--im2im_single`. First option downloads text-driven single domain adaptation pretrained checkpoints, second is for one-shot domain adaptation models.
+Pretrained models for various stylization are provided. 
+Please refer to `download.py` and run it with flag `--load_type=checkpoints` inside root.
+
+#### Additional notes
+
+Downloaded checkpoints structure
+
+```
+    root/
+        checkpoints/
+            td_checkpoints/
+                ...
+            im2im_checkpoints/
+                ...
+            mapper_20_td.pt  
+            mapper_large_resample_td.pt
+            mapper_base_im2im.pt
+```
+
+Each model except `mapper_base_im2im.pt` could be inferenced with `Inferencer`, to infer `mapper_base_im2im.pt` `Im2ImInferencer`
+
 
 ### Usage
 
@@ -93,10 +193,6 @@ Before evaluation trained models needed to be got with one of two mentioned ways
 ### Usage
 
 Given a pretrained checkpoint for certain target domain, one can be evaluated through the `examples/evaluation.ipynb` notebook
-
-### Code details
-
-/# TODO:
 
 ## Related Works
 
