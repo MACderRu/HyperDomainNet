@@ -82,63 +82,62 @@ python main.py exp.config={config_name}
 
 ### ***Config setup***
 
-#### exp:
-  * config_dir: `configs`
-  * config: `config_name.yaml`
-  * project: `WandbProjectName`
-  * tags:
+#### Exp:
+  * `config_dir`: configs
+  * `config`: config_name.yaml
+  * `project`: `WandbProjectName`
+  * `tags`:
     - tag1
     - tag2
-  * name: `WandbRunName`
-  * seed: 0
-  * root: .
-  * notes: empty notes
-  * step_save: 20  -  __model saving frequency__
-  * trainer: `trainer_name`
+  * `name`: `WandbRunName`
+  * `seed`: 0
+  * `root`: ./
+  * `notes`: empty notes
+  * `step_save`: 20 – *model dump frequency*
+  * `trainer`: trainer_name
   
-#### training:
-  * iter_num: 400 --- number of training iterations
-  * batch_size: 4
-  * device: cuda:0
-  * generator: stylegan2
-  * patch_key: s_delta
-  * phase: mapping  --- __which type of stylegan2 generator is fine-tuned, only used when 'patch_key' != 'original'__
-  * source_class: Photo
-  * `target_class`: 3D Render in the Style of Pixar
-  * auto_layer_k: 16
-  * auto_layer_iters: 0 --- __number of iterations for adaptive corresponding stylegan2 layer freeze__
-  * auto_layer_batch: 8
-  * mixing_noise: 0.9
+#### Training:
+  * `iter_num`: 400 – *number of training iterations*
+  * `batch_size`: 4
+  * `device`: cuda:0
+  * `generator`: stylegan2
+  * `patch_key`: cin_mult
+  * `phase`: mapping – **StyleGAN2 part which is fine-tuned, only used when `patch_key` = `original`**
+  * `source_class`: Photo – *description of source domain*
+  * `target_class`: 3D Render in the Style of Pixar – *description of target domain*
+  * `auto_layer_k`: 16
+  * `auto_layer_iters`: 0 – *number of iterations for adaptive corresponding stylegan2 layer freeze*
+  * `auto_layer_batch`: 8
+  * `mixing_noise`: 0.9
 
-#### optimization_setup:
-  * visual_encoders: --- __clip encoders that are used for clip based losses__
+#### Optimization_setup:
+  * `visual_encoders`: – *clip encoders that are used for clip based losses*
     - ViT-B/32
     - ViT-B/16
-  * loss_funcs:
+  * `loss_funcs`:
     - loss_name1
     - loss_name2
-  * loss_coefs:
+  * `loss_coefs`:
     - loss_coef1
     - loss_coef2
-  * g_reg_every: 4  ---  __stylegan2 regularization coefficient__
-  * optimizer:  ---  __optimizer hyperparameters for trainable model__
-    * weight_decay: 0.0
-    * lr: 0.01
-    * betas:
+  * `g_reg_every`: 4 – *stylegan2 regularization coefficient (not recommended to change)* 
+  * `optimizer`:
+    * `weight_decay`: 0.0
+    * `lr`: 0.01
+    * `betas`:
       - 0.9
       - 0.999
 
-#### logging:
-  * log_every: 10  ---  __metric logging step__
-  * log_images: 20  ---  __images logging step__
-  * latents_to_edit: []
-  * truncation: 0.7  ---  __truncation during images logging__
-  * num_grid_outputs: 1  ---  __number of logging grids__
+#### Logging:
+  * `log_every`: 10 – *loss logging step*
+  * `log_images`: 20 – *images logging step*
+  * `truncation`: 0.7 – *truncation during images logging*
+  * `num_grid_outputs`: 1 – *number of logging grids*
 
-#### checkpointing:
-  * is_on: false
-  * start_from: false
-  * step_backup: 100000
+#### Checkpointing:
+  * `is_on`: false
+  * `start_from`: false
+  * `step_backup`: 100000
 
 ### Usage
 
