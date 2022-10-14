@@ -338,7 +338,7 @@ def get_trainable_model_state(config, state_dict):
         # save mapper
         ckpt = {
             "model_type": "mapper",
-            "mapper_config": config.training.mapper_config,
+            "mapper_config": dict(config.mapper_config),
             "patch_key": config.training.patch_key,
             "state_dict": state_dict,
         }
@@ -350,32 +350,5 @@ def get_trainable_model_state(config, state_dict):
             "state_dict": state_dict
         }
     
-    ckpt['sg_2_params'] = dict(config.generator_args['stylegan2'])
+    ckpt['sg2_params'] = dict(config.generator_args['stylegan2'])
     return ckpt
-
-
-# def build_from_checkpoint(ckpt, generator_size=1024, generator_latent_dim=512, generator_nmlp=8):
-#     assert ckpt['model_type'] in ['original', 'mapper', 'parametrization']
-
-#     if ckpt['model_type'] == "original":
-#         model = OffsetsTunningGenerator(
-#             img_size=generator_size,
-#             latent_size=generator_latent_dim,
-#             map_layers=generator_nmlp
-#         )
-#         model.generator.load_state_dict(ckpt['state_dict'])
-#     elif ckpt['model_type'] == "mapper":
-#         model = mapper_registry[ckpt['mapper_type']](
-#             ckpt['mapper_config'],
-#             get_stylegan_conv_dimensions(generator_size)
-#         )
-
-#         model.load_state_dict(ckpt['state_dict'])
-#     else:
-#         model = BaseParametrization(
-#             ckpt['base_head_key'],
-#             get_stylegan_conv_dimensions(generator_size)
-#         )
-#         model.load_state_dict(ckpt['state_dict'])
-
-#     return model

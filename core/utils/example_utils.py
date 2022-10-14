@@ -1,13 +1,17 @@
 import os
 import numpy as np
 import torch
+import clip
 import torch.nn as nn
 import torch.nn.functional as F
 
 from torchvision import transforms
 from torchvision.utils import make_grid
 from core.uda_models import uda_models
-from core.utils.common import get_trainable_model_state, get_stylegan_conv_dimensions, align_face
+from core.utils.common import (
+    get_trainable_model_state, get_stylegan_conv_dimensions, align_face,
+    compose_text_with_templates, load_clip
+)
 from core.parametrizations import BaseParametrization
 from core.mappers import mapper_registry
 from restyle_encoders.psp import pSp
@@ -44,6 +48,7 @@ class Inferencer(nn.Module):
             )
             self.model_da.freeze_layers()
         elif self.model_type == 'mapper':
+            self.encoder, _ = load_clip(ckpt['clip_encoder'], self.device)
             self.model_da = mapper_registry[
                 ckpt['mapper_config']['mapper_type']
             ](
@@ -56,13 +61,13 @@ class Inferencer(nn.Module):
                 get_stylegan_conv_dimensions(ckpt['sg2_params']['img_size']),
             )
         self.model_da.load_state_dict(ckpt['state_dict'])
-        self.model_da.to(self.device)
+        self.model_da.to(self.device).eval()
         
         if self.da_type == 'im2im':
             self.style_latents = ckpt['style_latents'].to(self.device)
         
     @torch.no_grad()
-    def forward(self, latents, **kwargs):
+    def forward(self, latents, text_description=None, **kwargs):
         if not kwargs.get('input_is_latent', False):
             latents = self.sg2_source.style(latents)
             kwargs['input_is_latent'] = True
@@ -79,7 +84,13 @@ class Inferencer(nn.Module):
         if self.model_type == 'original':
             trg_imgs, _ = self.model_da(latents, **kwargs)
         elif self.model_type == 'mapper':
-            trg_imgs, _ = self.sg2_source(latents, offsets=self.model_da(kwargs['mapper_input']), **kwargs)
+            if text_description is not None:
+                text_encoded = self._encode_text(text_description)
+                offsets = self.model_da(text_encoded)
+            else:
+                offsets = None
+                
+            trg_imgs, _ = self.sg2_source(latents, offsets=offsets, **kwargs)
         else:
             trg_imgs, _ = self.sg2_source(latents, offsets=self.model_da(), **kwargs)
         
@@ -96,6 +107,14 @@ class Inferencer(nn.Module):
         style_mixing_latents[:, 7:, :] = self.style_latents
         return [style_mixing_latents]
     
+    @torch.no_grad()
+    def _encode_text(self, text, templates=("{}", )):
+        text = compose_text_with_templates(text, templates=templates)
+        tokens = clip.tokenize(text).to(self.device)
+        text_features = self.encoder.encode_text(tokens).detach().float()
+        text_features /= text_features.norm(dim=-1, keepdim=True)
+        return text_features
+
 
 @torch.no_grad()
 def get_avg_image(net):
