@@ -24,50 +24,48 @@ There are three type of models:
 - Universal HyperDomainNet.
 
 ## Table of Contents
-  * [Description](##description)
-  * [Getting Started](##getting-started)
-    + [Prerequisites](#prerequisites)
-    + [Installation](#installation)
-  * [Training](#training)
+  * [Description](#description)
+  * [Updates](#updates)
+  * [Getting Started](#getting-started)
+    + [Notes](#notes)
+    + [Dependencies](#dependencies)
+  * [Training](#model-training)
+  * [Inference](#pretrained-model-inference)
+  * [Editing](#editing)
+  * [Evaluation](#evaluation)
   * [Pretrained Models](#pretrained-models)
     + [ReStyle-pSp](#restyle-psp)
     + [ReStyle-e4e](#restyle-e4e)
     + [Auxiliary Models](#auxiliary-models)
-  * [Inference Notebooks](#inference-notebooks)
-  * [Editing](#editing)
-  * [Related Works](##related-works)
+  * [Related Works](#related-works)
   * [Citation](#citation)
 
 ## Updates
 
-**12/10/2022** Initial version
+**15/10/2022** Initial version
 
-## Setup 
+## Getting Started
+
 For all the methods described in the paper, is it required to have:
+
 - Anaconda
-- [CLIP](https://github.com/openai/CLIP)
-- required packages from requirements.txt
+- PyTorch >=1.7.1
+- Packages from requirements.txt
 
-Specific requirements for each method are described in its section. 
-To install CLIP please run the following commands:
-  ```shell script
-conda install --yes -c pytorch pytorch=1.7.1 torchvision cudatoolkit=<CUDA_VERSION>
-pip install ftfy regex tqdm gdown
-pip install git+https://github.com/openai/CLIP.git
-```
-
-## Overall  
-
-### Setup
+### Notes
 
 Here, the code relies on the [Rosinality](https://github.com/rosinality/stylegan2-pytorch/) pytorch implementation of StyleGAN2.
 Some parts of the StyleGAN implementation were modified, so that the whole implementation is native pytorch. 
 
-In addition to the requirements mentioned before, a pretrained StyleGAN2 generator will attempt to be downloaded with script *download.py --load_type=stylegan2*. All base requirements could be installed via 
+In addition to the requirements mentioned before, a pretrained StyleGAN2 generator will attempt to be downloaded with script *download.py*.
 
-```shell
+### Dependencies
+
+All base requirements could be installed via 
+
+```shell script
+conda install --yes -c pytorch pytorch=1.7.1 torchvision cudatoolkit=<CUDA_VERSION>
 !pip install -r requirements.txt
-!python download.py
 ```
 
 ## Model training
@@ -179,8 +177,18 @@ This operation can be done through the `examples/inference_playground.ipynb` not
 
 Core functions are 
 * mixing_noise (latent code generation)
-* InferenceWrapper (checkpoint processer)
+* Inference (checkpoint processer)
 
+## Real image editing
+
+### Setup
+
+Setup is same as in [Inference](#pretrained-model-inference) section
+
+### Usage
+
+Given a pretrained checkpoint for certain target domain, one can edit a given image
+Playground for editing could be found in `examples/editing_playground.ipynb` notebook and in google-colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1QMylWjzPxvHtxm74U4lWRQXwquw5AaFL#scrollTo=si2tLKYLT-kV)
 
 ## Model evaluation   
 
