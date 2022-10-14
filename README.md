@@ -9,19 +9,6 @@ Editing Playground: [![Open In Colab](https://colab.research.google.com/assets/c
 >
 >**Abstract:** Domain adaptation framework of GANs has achieved great progress in recent years as a main successful approach of training contemporary GANs in the case of very limited training data. In this work, we significantly improve this framework by proposing an extremely compact parameter space for fine-tuning the generator. We introduce a novel domain-modulation technique that allows to optimize only 6 thousand-dimensional vector instead of 30 million weights of StyleGAN2 to adapt to a target domain. We apply this parameterization to the state-of-art domain adaptation methods and show that it has almost the same expressiveness as the full parameter space. Additionally, we propose a new regularization loss that considerably enhances the diversity of the fine-tuned generator. Inspired by the reduction in the size of the optimizing parameter space we consider the problem of multi-domain adaptation of GANs, i.e. setting when the same model can adapt to several domains depending on the input query. We propose the HyperDomainNet that is a hypernetwork that predicts our parameterization given the target domain. We empirically confirm that it can successfully learn a number of domains at once and may even generalize to unseen domains.
 
-## Description
-Official Implementation of HyperDomainNet, a method of domain adaptation technique utilizes both text-driven and one-shot setups.
-
-Our method consist of several types of adaptation setups: 
-- text-driven single domain adaptation
-- image2image domain adaptation
-- HyperDomainNet for any textual description
-- HyperDomainNet for any given image (would be improved in future research).
-
-There are three type of models: 
-- Fine-tuned aligned child generator.
-- Specific target domain modulation operator.
-- Universal HyperDomainNet.
 
 ## Table of Contents
   * [Description](#description)
@@ -39,6 +26,21 @@ There are three type of models:
     + [Auxiliary Models](#auxiliary-models)
   * [Related Works](#related-works)
   * [Citation](#citation)
+
+
+## Description
+Official Implementation of HyperDomainNet, a method of domain adaptation technique utilizes both text-driven and one-shot setups.
+
+Our method consist of several types of adaptation setups: 
+- text-driven single domain adaptation
+- image2image domain adaptation
+- HyperDomainNet for any textual description
+- HyperDomainNet for any given image (would be improved in future research).
+
+There are three type of models: 
+- Fine-tuned aligned child generator.
+- Specific target domain modulation operator.
+- Universal HyperDomainNet.
 
 ## Updates
 
@@ -65,7 +67,7 @@ All base requirements could be installed via
 
 ```shell script
 conda install --yes -c pytorch pytorch=1.7.1 torchvision cudatoolkit=<CUDA_VERSION>
-!pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Model training
@@ -81,18 +83,18 @@ python main.py exp.config={config_name}
 ### ***Config setup***
 
 #### exp:
-  * config_dir: configs
-  * config: td_single_ffhq.yaml
-  * project: WandbProjectName
+  * config_dir: `configs`
+  * config: `config_name.yaml`
+  * project: `WandbProjectName`
   * tags:
-        - tag1
-        - tag2
-  * name: WandbRunName
+    - tag1
+    - tag2
+  * name: `WandbRunName`
   * seed: 0
   * root: .
   * notes: empty notes
   * step_save: 20  -  __model saving frequency__
-  * trainer: td_single
+  * trainer: `trainer_name`
   
 #### training:
   * iter_num: 400 --- number of training iterations
@@ -102,7 +104,7 @@ python main.py exp.config={config_name}
   * patch_key: s_delta
   * phase: mapping  --- __which type of stylegan2 generator is fine-tuned, only used when 'patch_key' != 'original'__
   * source_class: Photo
-  * target_class: 3D Render in the Style of Pixar
+  * `target_class`: 3D Render in the Style of Pixar
   * auto_layer_k: 16
   * auto_layer_iters: 0 --- __number of iterations for adaptive corresponding stylegan2 layer freeze__
   * auto_layer_batch: 8
@@ -110,16 +112,18 @@ python main.py exp.config={config_name}
 
 #### optimization_setup:
   * visual_encoders: --- __clip encoders that are used for clip based losses__
-        - ViT-B/32
-        - ViT-B/16
+    - ViT-B/32
+    - ViT-B/16
   * loss_funcs:
-        - direction
+    - loss_name1
+    - loss_name2
   * loss_coefs:
-        - 1.0
+    - loss_coef1
+    - loss_coef2
   * g_reg_every: 4  ---  __stylegan2 regularization coefficient__
   * optimizer:  ---  __optimizer hyperparameters for trainable model__
     * weight_decay: 0.0
-    * lr: 0.1
+    * lr: 0.01
     * betas:
       - 0.9
       - 0.999
