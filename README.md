@@ -142,10 +142,11 @@ When training ends model checkpoints could be found in `local_logged_exps/`. Eac
 
 Here, we provide the code for using pretrained checkpoints for inference.
 
-![](img/td_anime.png)
-![](img/im2im_anastasia.png)
-![](img/td_mapper_20.png)
-![](img/td_mapper_large.png)
+![](img/example_td_anime.jpg)
+![](img/example_im2im_anastasia.jpg)
+![](img/example_td_mapper_20.jpg)
+![](img/example_td_mapper_large.jpg)
+
 
 ### Setup
 
