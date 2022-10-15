@@ -31,7 +31,7 @@ class Inferencer(nn.Module):
             latent_size=ckpt['sg2_params']['latent_size'],
             map_layers=ckpt['sg2_params']['map_layers'],
             channel_multiplier=ckpt['sg2_params']['channel_multiplier'], 
-            checkpoint_path=ckpt['sg2_params']['ckpt_path']
+            checkpoint_path=ckpt['sg2_params']['checkpoint_path']
         )
         
         self.sg2_source.patch_layers(ckpt['patch_key'])
@@ -44,7 +44,7 @@ class Inferencer(nn.Module):
                 latent_size=ckpt['sg2_params']['latent_size'],
                 map_layers=ckpt['sg2_params']['map_layers'],
                 channel_multiplier=ckpt['sg2_params']['channel_multiplier'], 
-                checkpoint_path=ckpt['sg2_params']['ckpt_path']
+                checkpoint_path=ckpt['sg2_params']['checkpoint_path']
             )
             self.model_da.freeze_layers()
         elif self.model_type == 'mapper':
