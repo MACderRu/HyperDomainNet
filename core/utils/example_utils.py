@@ -27,11 +27,7 @@ class Inferencer(nn.Module):
         self.da_type = ckpt['da_type']
         
         self.sg2_source = uda_models['stylegan2'](
-            img_size=ckpt['sg2_params']['img_size'],
-            latent_size=ckpt['sg2_params']['latent_size'],
-            map_layers=ckpt['sg2_params']['map_layers'],
-            channel_multiplier=ckpt['sg2_params']['channel_multiplier'], 
-            checkpoint_path=ckpt['sg2_params']['checkpoint_path']
+            **ckpt['sg2_params']
         )
         
         self.sg2_source.patch_layers(ckpt['patch_key'])
@@ -40,11 +36,7 @@ class Inferencer(nn.Module):
         
         if self.model_type == 'original':
             self.model_da = uda_models['stylegan2'](
-                img_size=ckpt['sg2_params']['img_size'],
-                latent_size=ckpt['sg2_params']['latent_size'],
-                map_layers=ckpt['sg2_params']['map_layers'],
-                channel_multiplier=ckpt['sg2_params']['channel_multiplier'], 
-                checkpoint_path=ckpt['sg2_params']['checkpoint_path']
+                **ckpt['sg2_params']
             )
             self.model_da.freeze_layers()
         elif self.model_type == 'mapper':
