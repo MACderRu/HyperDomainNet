@@ -9,9 +9,7 @@ from pathlib import Path
 SOURCES = {
     'StyleGAN2': 'https://www.dropbox.com/s/ovt5y7yfn2odwbf/StyleGAN2_weights.zip?dl=0',
     'DLIB': 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2',
-    'checkpoints': {
-        'single': 'https://www.dropbox.com/s/nigsjd0di41p950/checkpoints.zip?dl=0'
-    },
+    'checkpoints': 'single': 'https://www.dropbox.com/s/nigsjd0di41p950/checkpoints.zip?dl=0',
     'restyle': 'https://www.dropbox.com/s/b3atzfkx0upbx10/restyle_psp_ffhq_encode.pt?dl=0'
 }
 
@@ -83,20 +81,9 @@ def load_restyle_weights():
 
         
 def download_checkpoints(keys=None):
-    if keys is None:
-        keys = [
-            'single',
-            # 'multiple_tdda20_checkpoint',
-            # 'multiple_im2imda7_checkpoint',
-            # 'multiple_tdda_large_checkpoint',
-        ]
-    elif isinstance(keys, str):
-        keys = [keys]
-
-    for key in keys:
-        download(SOURCES['checkpoints'][key], f'{key}.zip')
-        unzip(f'{key}.zip')
-        rm_file(f'{key}.zip')
+    download(SOURCES['checkpoints'], 'checkpoints.zip')
+    unzip('checkpoints.zip')
+    rm_file('checkpoints.zip')
 
 
 loaders = {
