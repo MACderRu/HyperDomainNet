@@ -9,7 +9,7 @@ from pathlib import Path
 SOURCES = {
     'StyleGAN2': 'https://www.dropbox.com/s/ovt5y7yfn2odwbf/StyleGAN2_weights.zip?dl=0',
     'DLIB': 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2',
-    'checkpoints': 'single': 'https://www.dropbox.com/s/nigsjd0di41p950/checkpoints.zip?dl=0',
+    'checkpoints': 'https://www.dropbox.com/s/r8816i09t9n94hy/checkpoints.zip?dl=0',
     'restyle': 'https://www.dropbox.com/s/b3atzfkx0upbx10/restyle_psp_ffhq_encode.pt?dl=0'
 }
 
@@ -81,6 +81,9 @@ def load_restyle_weights():
 
         
 def download_checkpoints(keys=None):
+    if Path('checkpoints').exists():
+        print('[Pretrained Models] weights are already downloaded')
+        return
     download(SOURCES['checkpoints'], 'checkpoints.zip')
     unzip('checkpoints.zip')
     rm_file('checkpoints.zip')
@@ -96,16 +99,16 @@ loaders = {
 
 
 @click.command()
-@click.option('--load_type', default=None)
-def main(load_type):
+@click.argument('value', default=None, nargs=-1)
+def main(value):
     destination = Path(__file__).parent / 'pretrained'
     destination.mkdir(exist_ok=True)
-    
-    if load_type is None:
+    if not value:
         for name, fn in loaders.items():
             fn()
     else:
-        loaders[load_type]()
+        for key in value:
+            loaders[key]()
     
 
 if __name__ == '__main__':
