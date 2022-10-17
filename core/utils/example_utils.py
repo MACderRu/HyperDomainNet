@@ -159,9 +159,9 @@ def get_celeb_latents(names):
     ], dim=0)
 
 
-def to_im(torch_image):
+def to_im(torch_image, **kwargs):
     return transforms.ToPILImage()(
-        make_grid(torch_image, value_range=(-1, 1), normalize=True)
+        make_grid(torch_image, value_range=(-1, 1), normalize=True, **kwargs)
     )
 
 
