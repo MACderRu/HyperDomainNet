@@ -1,17 +1,43 @@
 # HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks (NeurIPS 2022)
 
-Editing Playground: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1QMylWjzPxvHtxm74U4lWRQXwquw5AaFL#scrollTo=si2tLKYLT-kV)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1QMylWjzPxvHtxm74U4lWRQXwquw5AaFL#scrollTo=si2tLKYLT-kV)
+[![arXiv](https://img.shields.io/badge/arXiv-2210.08884-b31b1b.svg)](https://arxiv.org/abs/2210.08884)
+
+[Aibek Alanov*](https://scholar.google.ru/citations?view_op=list_works&hl=en&hl=en&user=MXJTRGoAAAAJ), 
+[Vadim Titov*](https://github.com/MACderRu), 
+[Dmitry Vetrov](https://scholar.google.ru/citations?hl=en&user=7HU0UoUAAAAJ) <br>
+*Equal contribution <br>
+
+>**Abstract:** Domain adaptation framework of GANs has achieved great progress in recent years as a main successful approach of training contemporary GANs in the case of very limited training data. In this work, we significantly improve this framework by proposing an extremely compact parameter space for fine-tuning the generator. We introduce a novel domain-modulation technique that allows to optimize only 6 thousand-dimensional vector instead of 30 million weights of StyleGAN2 to adapt to a target domain. We apply this parameterization to the state-of-art domain adaptation methods and show that it has almost the same expressiveness as the full parameter space. Additionally, we propose a new regularization loss that considerably enhances the diversity of the fine-tuned generator. Inspired by the reduction in the size of the optimizing parameter space we consider the problem of multi-domain adaptation of GANs, i.e. setting when the same model can adapt to several domains depending on the input query. We propose the HyperDomainNet that is a hypernetwork that predicts our parameterization given the target domain. We empirically confirm that it can successfully learn a number of domains at once and may even generalize to unseen domains.
 
 ![](img/cover_31.png)
 
-> **HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks**<br>
-> Aibek Alanov*, Vadim Titov*, Dmitry Vetrov <br>
-> *Equal contribution <br>
-> https://arxiv.org/abs/ <br>
->
->**Abstract:** Domain adaptation framework of GANs has achieved great progress in recent years as a main successful approach of training contemporary GANs in the case of very limited training data. In this work, we significantly improve this framework by proposing an extremely compact parameter space for fine-tuning the generator. We introduce a novel domain-modulation technique that allows to optimize only 6 thousand-dimensional vector instead of 30 million weights of StyleGAN2 to adapt to a target domain. We apply this parameterization to the state-of-art domain adaptation methods and show that it has almost the same expressiveness as the full parameter space. Additionally, we propose a new regularization loss that considerably enhances the diversity of the fine-tuned generator. Inspired by the reduction in the size of the optimizing parameter space we consider the problem of multi-domain adaptation of GANs, i.e. setting when the same model can adapt to several domains depending on the input query. We propose the HyperDomainNet that is a hypernetwork that predicts our parameterization given the target domain. We empirically confirm that it can successfully learn a number of domains at once and may even generalize to unseen domains.
+## Description
+The repository implements the **domain-modulation technique** and the **HyperDomainNet** from the paper 
+"HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks". 
+
+The domain-modulation technique allows to significantly reduce the number of training parameters required for
+the domain adaptation of the StyleGAN2 from 30 million weights to the only 6 thousand-dimensional domain vector. 
+The overall idea of this mechanism is illustrated in the following diagram:
+
+![](img/domain_modulation.png)
+
+The technique is implemented for two types of adaptation setups: 
+- text-driven single domain adaptation
+- image2image domain adaptation.
+
+You can play with these setup in the colab notebook we set up for you: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1QMylWjzPxvHtxm74U4lWRQXwquw5AaFL#scrollTo=si2tLKYLT-kV)
+
+Inspired by the reduction in the size of the optimizing parameter space we propose the HyperDomainNet that can predict our 
+parameterization given the target domain. The following diagram demonstrates its structure and how it can be trained: 
 
 ![](img/hdn_diagram.png)
+
+There are two setups for the HyperDomainNet:
+- HyperDomainNet for any textual description
+- HyperDomainNet for any given image (would be improved in future research).
+
+You can also play with the HyperDomainNet in our colab notebook. 
 
 ## Table of Contents
   * [Description](#description)
@@ -25,20 +51,6 @@ Editing Playground: [![Open In Colab](https://colab.research.google.com/assets/c
   * [Evaluation](#model-evaluation)
   * [Related Works](#related-works)
   * [Citation](#citation)
-  
-## Description
-Official Implementation of HyperDomainNet, a method of domain adaptation technique utilizes both text-driven and one-shot setups.
-
-Our method consist of several types of adaptation setups: 
-- text-driven single domain adaptation
-- image2image domain adaptation
-- HyperDomainNet for any textual description
-- HyperDomainNet for any given image (would be improved in future research).
-
-There are three type of models: 
-- Fine-tuned aligned child generator.
-- Specific target domain modulation operator.
-- Universal HyperDomainNet.
 
 ## Updates
 
@@ -220,10 +232,13 @@ To edit real images, we inverted them to the StyleGAN's latent space using [ReSt
 If you use this code for your research, please cite our paper:
 
 ```
-@InProceedings{Alanov_2022_NeurIPS,
-    author    = {Alanov, Aibek and Titov, Vadim and Vetrov, Dmitry},
-    title     = {HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks},
-    month     = {October},
-    year      = {2022},
+@InProceedings{alanov2022hyperdomainnet,
+    author={Alanov, Aibek and Titov, Vadim and Vetrov, Dmitry},
+    title={HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks},
+    month={October},
+    year={2022},
+    eprint={2210.08884},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV}
 }
 ```
