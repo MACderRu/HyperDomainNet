@@ -235,10 +235,7 @@ If you use this code for your research, please cite our paper:
 @InProceedings{alanov2022hyperdomainnet,
     author={Alanov, Aibek and Titov, Vadim and Vetrov, Dmitry},
     title={HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks},
-    month={October},
-    year={2022},
-    eprint={2210.08884},
-    archivePrefix={arXiv},
-    primaryClass={cs.CV}
+    journal={Advances In Neural Information Processing Systems},
+    year={2022}
 }
 ```
