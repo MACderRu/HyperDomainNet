@@ -1,26 +1,20 @@
 import click
-import tarfile
-import argparse
 import subprocess
 
 from pathlib import Path
 
 
-SOURCES = {
-    'StyleGAN2': 'https://www.dropbox.com/s/ovt5y7yfn2odwbf/StyleGAN2_weights.zip?dl=0',
-    'DLIB': 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2',
-    'checkpoints': 'https://www.dropbox.com/s/r8816i09t9n94hy/checkpoints.zip?dl=0',
-    'restyle': 'https://www.dropbox.com/s/b3atzfkx0upbx10/restyle_psp_ffhq_encode.pt?dl=0'
-}
-
-
-def download(source: str, destination: str) -> None:
+def download_curl(source: str, destination: str) -> None:
     # urllib has troubles with dropbox
     subprocess.run(
         ['curl', '-L', '-k', source, '-o', destination]
     )
 
 
+def download_gdrive(file_id: str, destination: str) -> None:
+    subprocess.run(['gdown', '--id', file_id, '-O', destination])
+    
+    
 def unzip(path: str, res_path: str = None):
     command = ['unzip', path]
     
@@ -35,80 +29,66 @@ def bzip2(path: str):
     
 def rm_file(path: str):
     subprocess.run(['rm', path])
-
-
-def load_stylegan2_weights(tmp_name='test.zip'):
-    source = SOURCES['StyleGAN2']
-    destdir = Path(__file__).parent / 'pretrained'
-    if (destdir / 'StyleGAN2').exists():
-        print('[StyleGAN2] weights are already downloaded')
-        return
     
-    print(f'[StyleGAN2] Downloading...')
-    download(source, str(destdir / tmp_name))
-    unzip(str(destdir / tmp_name), str(destdir))
-    rm_file(str(destdir / tmp_name))
 
 
-def load_dlib_model():
-    source = SOURCES['DLIB']
-    destination = Path(f"pretrained/{source.split('/')[-1]}")
-    
-    if Path('pretrained/shape_predictor_68_face_landmarks.dat').exists():
-        print('[DLIB] model is already downloaded')
-        return
-    
-    print(f'[DLIB] Downloading...')
-    download(source, str(destination))
-    bzip2(str(destination))
-
-    
-def load_clip_models():
-    import clip
-    for model_name in ['ViT-B/32', 'ViT-B/16', 'ViT-L/14']:
-        clip.load(model_name)
-        print(f'[CLIP] {model_name} is loaded')
-
-        
-def load_restyle_weights():
-    path = f'pretrained/restyle_psp_ffhq_encode.pt'
-    if Path(path).exists():
-        print('[ReStyle] weights are already downloaded')
-        return
-    
-    print(f'[ReStyle] Downloading...')
-    download(SOURCES['restyle'], f'pretrained/restyle_psp_ffhq_encode.pt')
-
-        
-def download_checkpoints(keys=None):
-    if Path('checkpoints').exists():
-        print('[Pretrained Models] weights are already downloaded')
-        return
-    download(SOURCES['checkpoints'], 'checkpoints.zip')
-    unzip('checkpoints.zip')
-    rm_file('checkpoints.zip')
-
-
-loaders = {
-    'stylegan2': load_stylegan2_weights,
-    'dlib': load_dlib_model,
-    'clip': load_clip_models,
-    'checkpoints': download_checkpoints,
-    'restyle': load_restyle_weights
+SOURCES = {
+    'stylegan2': {
+        'id': '1Yr7KuD959btpmcKGAUsbAk5rPjX2MytK',
+        'name': 'stylegan2-ffhq-config-f.pt'
+    },
+    'dlib': {
+        'link': 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2',
+        'name': 'shape_predictor_68_face_landmarks.dat.bz2'
+    },
+    'restyle_psp': {
+        'id': '1nbxCIVw9H3YnQsoIPykNEFwWJnHVHlVd',
+        'name': 'restyle_psp_ffhq_encode.pt'
+    },
+    'e4e': {
+        'id': '1o6ijA3PkcewZvwJJ73dJ0fxhndn0nnh7',
+        'name': 'e4e_ffhq_encode.pt'
+    },
+    'checkpoints': {
+        'link': 'https://www.dropbox.com/s/r8816i09t9n94hy/checkpoints.zip?dl=0',
+        'name': 'checkpoints.zip'
+    }
 }
 
 
+class Setup:    
+    def __init__(self):
+        self.destination = Path(__file__).parent / 'pretrained'
+        self.destination.mkdir(exist_ok=True)
+        
+    def _download(self, data):
+        
+        file_dest = str(self.destination / data['name'])
+        
+        if 'link' in data:
+            download_curl(data['link'], file_dest)
+        elif 'id' in data:
+            download_gdrive(data['id'], file_dest)
+        
+        if file_dest.endswith('bz2'):
+            bzip2(file_dest)
+            rm_file(file_dest)
+        
+        if file_dest.endswith('zip'):
+            unzip(file_dest, str(self.destination))
+            rm_file(file_dest)
+        
+    def setup(self, values):
+        for value in values:
+            self._download(SOURCES[value])
+            
+            
 @click.command()
 @click.argument('value', default=None, nargs=-1)
 def main(value):
-    destination = Path(__file__).parent / 'pretrained'
-    destination.mkdir(exist_ok=True)
-    if not value:
-        for name, fn in loaders.items():
-            fn()
-    else:
-        for key in value:
-            loaders[key]()
+    setuper = Setup()
+    values = value if value else SOURCES.keys()
+    setuper.setup(values)
     
 
 if __name__ == '__main__':
