@@ -75,7 +75,7 @@ SOURCES = {
         'link': 'https://nxt.2a2i.org/index.php/s/2K3jbFD3Tg7QmHA/download/StyleGAN2.zip',
         'name': 'StyleGAN2.zip',
         'uncompressed_dir': ''
-    }
+    },
     'dlib': {
         'link': 'http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2',
         'name': 'shape_predictor_68_face_landmarks.dat.bz2'
