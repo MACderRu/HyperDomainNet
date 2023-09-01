@@ -90,7 +90,8 @@ SOURCES = {
     },
     'checkpoints': {
         'link': 'https://www.dropbox.com/s/r8816i09t9n94hy/checkpoints.zip?dl=0',
-        'name': 'checkpoints.zip'
+        'name': 'checkpoints.zip',
+        'uncompressed_dir': ''
     }
 }
             
