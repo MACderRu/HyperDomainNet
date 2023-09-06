@@ -58,7 +58,7 @@ You can also play with the HyperDomainNet in our colab notebook.
 
 ## Getting Started
 
-For all the methods described in the paper, is it required to have:
+For all the methods described in the paper, it is required to have:
 
 - Anaconda
 - PyTorch >=1.7.1
@@ -232,10 +232,12 @@ To edit real images, we inverted them to the StyleGAN's latent space using [ReSt
 If you use this code for your research, please cite our paper:
 
 ```
-@InProceedings{alanov2022hyperdomainnet,
-    author={Alanov, Aibek and Titov, Vadim and Vetrov, Dmitry},
-    title={HyperDomainNet: Universal Domain Adaptation for Generative Adversarial Networks},
-    journal={Advances In Neural Information Processing Systems},
-    year={2022}
+@article{alanov2022hyperdomainnet,
+  title={Hyperdomainnet: Universal domain adaptation for generative adversarial networks},
+  author={Alanov, Aibek and Titov, Vadim and Vetrov, Dmitry P},
+  journal={Advances in Neural Information Processing Systems},
+  volume={35},
+  pages={29414--29426},
+  year={2022}
 }
 ```
